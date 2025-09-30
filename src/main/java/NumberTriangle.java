@@ -1,4 +1,6 @@
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This is the provided NumberTriangle class to be used in this coding task.
@@ -88,7 +90,23 @@ public class NumberTriangle {
      *
      */
     public int retrieve(String path) {
-        // TODO implement this method
+        if (path.equals("")) {
+            return this.getRoot();
+        }
+        else if (path.equals("l")) {
+            return this.left.getRoot();
+        }
+        else if (path.equals("r")) {
+            return this.right.getRoot();
+        }
+        else {
+            if (path.substring(0, 1).equals("l")) {
+                return this.left.retrieve(path.substring(1));
+            }
+            if (path.substring(0,1).equals("r")) {
+                return this.right.retrieve(path.substring(1));
+            }
+        }
         return -1;
     }
 
@@ -116,14 +134,33 @@ public class NumberTriangle {
         // so might want a variable for that.
         NumberTriangle top = null;
 
+        List<NumberTriangle> prev = new ArrayList<NumberTriangle>();
+
         String line = br.readLine();
         while (line != null) {
+            line = line.trim();
+            String[] nums = line.split("\\s+");
 
-            // remove when done; this line is included so running starter code prints the contents of the file
-            System.out.println(line);
+            List<NumberTriangle> curr = new ArrayList<NumberTriangle>();
 
-            // TODO process the line
+            for (int i = 0; i <nums.length; i++){
+                int val = Integer.parseInt(nums[i]);
+                NumberTriangle node = new NumberTriangle(val);
+                curr.add(node);
 
+                if (i < prev.size()){
+                    prev.get(i).setLeft(node);
+                }
+                if (i - 1 >= 0 && i - 1 < prev.size()){
+                    prev.get(i - 1).setRight(node);
+                }
+            }
+
+            if (top == null && curr.size() > 0){
+                top = curr.get(0);
+            }
+
+            prev = curr;
             //read the next line
             line = br.readLine();
         }
